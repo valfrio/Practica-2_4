@@ -56,14 +56,80 @@ Cambiamos nombre
 
 Una vez hecho volvemos a crear el enlace simbólico
 
-![imagen 12](assets/images/)
+![imagen 12](assets/images/12.png)
 
 Ahora debemos de cambiar el archivo de configuración de la misma forma:
 
 ![imagen 13](assets/images/14.png)
 
 
-
 ## Configuración del balanceador de carga
 
+Ahora debemos de cambiar el nombre de lso archivos de configuración por balanceo
+
+![imagen 14](assets/images/15.png)
+
+Ahora el paso clave. Debemos de cambiar el archivo de configuración para que el proxy-balanceador de carga redirija el tráfico a los dos servidores. Para ello debemos cambiar el archivo para que tenga este formato:
+
+```
+ upstream backend_hosts {
+                random;
+                server ________:____;
+                server ________:____;
+    }
+            server {
+                listen 80;
+                server_name ________;      
+                location / {
+                    proxy_pass http://backend_hosts;
+                }
+            }
+```
+
+El bloque de server se encarga de redirigir el tráfico a los backend_hosts. Estos son el grupo de servidores definidos arriba en el bloque de upstream. Este bloque se encarga de la redirección y de que patrón seguir, en nuestro caso random para mayor simplicidad. Ahí añadiremos los servidores, donde la primera raya es donde tiene que estar la ip del servidor y en la siguiente raya después de los dos puntos el puerto que escucha el servidor. 
+
+El archivo de configuración en mi caso quedó:
+
+![imagen 15](assets/images/16.png)
+
+Ahora entramos para comprobar que funciona
+
+![imagen 16](assets/images/17.png)
+
+Podemos ver que nos ha servido el primer servidor. Si recargamos las suficientes veces veremos que nos servirá el segundo servidor
+
+![imagen 17](assets/images/18.png)
+
+Podemos ver los logs de acceso para mayor seguridad:
+
+![imagen 18](assets/images/19.png)
+
+![imagen 19](assets/images/20.png)
+
+Ahora veremos que el balanceador comprueba que los servicios estén activos a la hora de redirigir. Pararemos el servicio en ambas máquinas y veremos que efectivamente redirige a la otra todo el rato. Comenzamos con el primer servidor:
+
+![imagen 20](assets/images/21.png)
+
+Efectivamente me redirigió solo al servidor 2.
+
+![imagen 21](assets/images/18.png)
+
+Iniciamos de nuevo el servicio
+
+![imagen 22](assets/images/22.png)
+
+Y hacemos lo mismo con el webserver2
+
+![imagen 23](assets/images/23.png)
+
+![imagen 24](assets/images/17.png)
+
+
 ## Cuestiones finales
+
+### Cuestión 1
+### Cuestión 2
+
+
+El bloque de server se encarga de redirigir el tráfico a los backend_hosts. Estos son el grupo de servidores definidos arriba en el bloque de upstream. Este bloque se encarga de la redirección y de que patrón seguir, en nuestro caso random para mayor simplicidad. Ahí añadiremos los servidores, donde la primera raya es donde tiene que estar la ip del servidor y en la siguiente raya después de los dos puntos el puerto que escucha el servidor. 
+### Cuestión 3
