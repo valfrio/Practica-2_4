@@ -128,8 +128,24 @@ Y hacemos lo mismo con el webserver2
 ## Cuestiones finales
 
 ### Cuestión 1
+
+Los siguientes métodos encontrados son los más comunes que he visto:
+
+- Round Robin: Asigna solicitudes secuencialmente entre los servidores.
+
+- Least Connections: Envía la solicitud al servidor con menos conexiones activas.
+
+- IP Hash: Utiliza la IP del cliente para definir siempre el mismo servidor en función de su dirección
+
 ### Cuestión 2
 
 
-El bloque de server se encarga de redirigir el tráfico a los backend_hosts. Estos son el grupo de servidores definidos arriba en el bloque de upstream. Este bloque se encarga de la redirección y de que patrón seguir, en nuestro caso random para mayor simplicidad. Ahí añadiremos los servidores, donde la primera raya es donde tiene que estar la ip del servidor y en la siguiente raya después de los dos puntos el puerto que escucha el servidor. 
+El bloque de server se encarga de redirigir el tráfico a los backend_hosts. Estos son el grupo de servidores definidos arriba en el bloque de upstream. Este bloque se encarga de la redirección y de que patrón seguir. Ahí añadiremos los servidores, donde la primera raya es donde tiene que estar la ip del servidor y en la siguiente raya después de los dos puntos el puerto que escucha el servidor. 
+
 ### Cuestión 3
+
+Deberíamos seguir dos pasos:
+
+- Definir el bloque upstream  para añadir la ip y los puertos de las peticiones, así añadiendo la función de balanceador.
+
+- Definir en el bloque location el proxy_pass que redirija las peticiones a los servidores definidos en el upstream.
